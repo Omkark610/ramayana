@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-PGR4Y0TVNP"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-PGR4Y0TVNP');
+</script>
+  
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Legend of Ram 3D</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#fbf1dc;--fg:#3b1d0e;--card:#fff8eaee;--acc:#c2410c;--acc2:#b8860b;--mut:#7a5a44;--line:#e3c995}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1a0c08;--fg:#f6e4c4;--card:#2a1510ee;--acc:#f59e0b;--acc2:#fbbf24;--mut:#c9a67e;--line:#5a3419}}
+:root[data-theme="dark"]{--bg:#1a0c08;--fg:#f6e4c4;--card:#2a1510ee;--acc:#f59e0b;--acc2:#fbbf24;--mut:#c9a67e;--line:#5a3419}
+html{scroll-padding-top:env(safe-area-inset-top,0px);height:100%}
+*{box-sizing:border-box}
+body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--fg);font-family:Georgia,'Times New Roman',serif}
+#c{position:fixed;inset:0;width:100%;height:100%;touch-action:none;display:block}
+header{position:fixed;top:calc(8px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);width:min(560px,calc(100% - 20px));display:flex;justify-content:space-between;gap:6px;font-size:13px}
+header span{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:5px 11px;color:var(--mut)}
+header b{color:var(--acc)}
+#stage{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(10px + env(safe-area-inset-bottom,0px));width:min(560px,calc(100% - 20px));max-height:56vh;overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;text-align:center;backdrop-filter:blur(6px);box-shadow:0 6px 24px rgba(0,0,0,.35)}
+#stage.g{padding:10px 14px}
+.icon{font-size:36px;line-height:1}
+h2{margin:4px 0;font-size:21px;color:var(--acc)}
+.sub{color:var(--acc2);font-style:italic;margin:0}
+p{line-height:1.5;margin:8px 0;font-size:16px}
+button{display:block;width:100%;margin:8px 0 0;padding:12px;font:inherit;font-size:16px;color:var(--fg);background:transparent;border:1.5px solid var(--acc);border-radius:12px;cursor:pointer}
+button:hover,button:focus-visible{background:var(--acc);color:var(--bg)}
+button.p{background:var(--acc);color:var(--bg);font-weight:bold}
+.bar{position:relative;height:30px;background:color-mix(in srgb,var(--fg) 15%,transparent);border-radius:15px;margin:12px 0;overflow:hidden}
+.zone{position:absolute;top:0;bottom:0;background:#16a34a;opacity:.85}
+.mk{position:absolute;top:0;bottom:0;width:6px;background:var(--acc);box-shadow:0 0 8px var(--acc)}
+.info{min-height:22px;color:var(--mut);font-size:15px;margin:4px 0}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<header><span>🕉️ Dharma <b id="d">0</b></span><span id="ch">Prologue</span><span>🏹 Valor <b id="v">0</b></span></header>
+<main id="stage"></main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const $=id=>document.getElementById(id),T=THREE,rand=(a,b)=>a+Math.random()*(b-a);
+const S={d:0,v:0},K={};let best=0,act=null,gt=null,tap=null,mHook=null,W,bobs=[],ticks=[],fx=[],V={x:0,y:1,z:0,r:10,h:4,o:1},RV,hd=[],bow;
+try{best=+localStorage.getItem('ram_best')||0}catch(e){}
+/* ---------- 3D engine ---------- */
+const cv=$('c'),R=new T.WebGLRenderer({antialias:true,canvas:cv}),sc=new T.Scene(),cam=new T.PerspectiveCamera(55,1,.1,300);
+R.setPixelRatio(Math.min(devicePixelRatio,2));
+sc.add(new T.HemisphereLight(0xfff1d6,0x553322,.95));
+const sun=new T.DirectionalLight(0xffe0b0,.9);sun.position.set(10,20,10);sc.add(sun);
+function size(){R.setSize(innerWidth,innerHeight,false);cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix()}
+addEventListener('resize',size);size();
+const mt=(c,e)=>new T.MeshStandardMaterial({color:c,flatShading:true,emissive:e||0,roughness:.85});
+function add(g,m,x,y,z,p){const o=new T.Mesh(g,m);o.position.set(x,y,z);(p||W).add(o);return o}
+function world(sky,c,build){if(W)sc.remove(W);W=new T.Group();sc.add(W);bobs=[];ticks=[];fx=[];sc.background=new T.Color(sky);sc.fog=new T.Fog(sky,30,110);V=Object.assign({x:0,y:1.5,z:0,r:11,h:4,o:1},c);build()}
+function pl(sk,cl,x,z,s,crown){const g=new T.Group();add(new T.CylinderGeometry(.3,.45,1.3,8),mt(cl),0,.65,0,g);add(new T.SphereGeometry(.3,12,10),mt(sk),0,1.6,0,g);if(crown!==0)add(new T.ConeGeometry(.22,.4,6),mt(0xfacc15,0x553300),0,2,0,g);g.position.set(x,0,z);g.scale.setScalar(s||1);W.add(g);bobs.push(g);return g}
+const ram=(x,z,s)=>{const g=pl(0x4f86f7,0xf59e0b,x,z,s);const b=add(new T.TorusGeometry(.7,.05,6,16,Math.PI),mt(0x92400e),.5,1.1,0,g);b.rotation.z=-Math.PI/2;return g};
+const sita=(x,z)=>pl(0xe8b890,0xe11d48,x,z,.95,0),lak=(x,z)=>pl(0xe8b890,0x16a34a,x,z);
+const ground=c=>add(new T.CylinderGeometry(70,70,1,40),mt(c),0,-.5,0);
+function tree(x,z){const h=rand(2.5,5);add(new T.CylinderGeometry(.25,.35,h,6),mt(0x5b3a1e),x,h/2,z);add(new T.ConeGeometry(1.5,h*1.2,7),mt(0x1f6b2e),x,h+.8,z)}
+function diyas(n,a,b){for(let i=0;i<n;i++){const t=rand(0,6.28),r=rand(a,b);add(new T.ConeGeometry(.22,.28,6),mt(0xf59e0b,0xffa500),Math.cos(t)*r,.15,Math.sin(t)*r)}}
+function stars(){const g=new T.BufferGeometry(),p=[];for(let i=0;i<300;i++)p.push(rand(-120,120),rand(15,90),rand(-120,0));g.setAttribute('position',new T.Float32BufferAttribute(p,3));W.add(new T.Points(g,new T.PointsMaterial({color:0xffffff,size:.6,fog:false})))}
+function mount(n,c){for(let i=0;i<n;i++){const h=rand(10,26);add(new T.ConeGeometry(rand(7,12),h,6),mt(c),rand(-70,70),h/2,-rand(40,70))}}
+function tower(x,z){const h=rand(8,16);add(new T.CylinderGeometry(1.2,1.6,h,8),mt(0xd4a017,0x3a2a00),x,h/2,z);add(new T.ConeGeometry(1.8,3,8),mt(0xb91c1c,0x300000),x,h+1.5,z)}
+function burst(x,y,z,c,n,sp,l){for(let i=0;i<n;i++){const m=add(new T.SphereGeometry(.12,6,5),mt(c,c),x,y,z);fx.push({m,v:new T.Vector3(rand(-1,1),rand(-.2,1),rand(-1,1)).multiplyScalar(sp||.2),l:l||60,L:l||60})}}
+function shoot(a,b,done){const m=add(new T.ConeGeometry(.12,1.4,6),mt(0xfde047,0xfacc15),a[0],a[1],a[2]);m.rotation.x=-Math.PI/2;let k=0;const f=()=>{k++;m.position.set(a[0]+(b[0]-a[0])*k/40,a[1]+(b[1]-a[1])*k/40,a[2]+(b[2]-a[2])*k/40);if(k>=40){W.remove(m);ticks.splice(ticks.indexOf(f),1);done()}};ticks.push(f)}
+const tp=new T.Vector3();let ang=0;
+function loop(t){requestAnimationFrame(loop);ang+=.004;
+  const o=V.o?ang:0;tp.set(V.x+Math.sin(o)*V.r,V.h,V.z+Math.cos(o)*V.r);cam.position.lerp(tp,.05);cam.lookAt(V.x,V.y,V.z);
+  bobs.forEach((g,i)=>g.position.y=Math.abs(Math.sin(t/400+i))*.08);
+  gt&&gt(t);ticks.slice().forEach(f=>f(t));
+  fx=fx.filter(p=>{p.m.position.add(p.v);p.v.y-=.004;p.l--;p.m.scale.setScalar(Math.max(.01,p.l/p.L));if(p.l<=0){W.remove(p.m);return false}return true});
+  R.render(sc,cam)}
+/* ---------- UI ---------- */
+function hud(ch){$('d').textContent=S.d;$('v').textContent=S.v;if(ch)$('ch').textContent=ch}
+function ui(h,g){gt=act=tap=mHook=null;cv.onpointermove=null;const s=$('stage');s.className=g?'g':'';s.innerHTML=h;s.scrollTop=0}
+function story(icon,title,text,opts,sub){
+  ui(`<div class="icon">${icon}</div><h2>${title}</h2>${sub?`<p class="sub">${sub}</p>`:''}<p>${text}</p>${opts.map((o,i)=>`<button data-i="${i}" ${opts.length==1?'class="p"':''}>${o[0]}</button>`).join('')}`);
+  $('stage').querySelectorAll('button').forEach(b=>b.onclick=()=>opts[+b.dataset.i][1]());hud()}
+addEventListener('keydown',e=>{K[e.key]=1;if(e.code==='Space'&&act){e.preventDefault();act()}});addEventListener('keyup',e=>K[e.key]=0);
+cv.addEventListener('pointerdown',e=>{if(tap){const r=new T.Raycaster();r.setFromCamera(new T.Vector2(e.clientX/innerWidth*2-1,-e.clientY/innerHeight*2+1),cam);const h=r.intersectObjects(hd)[0];tap(h?hd.indexOf(h.object):-1)}});
+/* ---------- mini-games ---------- */
+function meter(txt,zone,rounds,speed,cb,hook){
+  let r=0,hits=0,pos=0,dir=1,zl=0;
+  ui(`<p>${txt}</p><div class="bar"><i class="zone" id="z"></i><b class="mk" id="m"></b></div><button class="p" id="go">Release! (Space)</button><p class="info" id="inf">Round 1 of ${rounds}</p>`,1);
+  mHook=hook;
+  const sz=()=>{zl=10+Math.random()*(80-zone);$('z').style.left=zl+'%';$('z').style.width=zone+'%'};sz();
+  gt=()=>{pos+=dir*speed;if(pos>=100||pos<=0){dir*=-1;pos=Math.max(0,Math.min(100,pos))}$('m').style.left=pos+'%';mHook&&mHook(pos)};
+  act=()=>{const ok=pos>=zl&&pos<=zl+zone;if(ok)hits++;r++;
+    if(r>=rounds){gt=act=null;cb(hits);return}
+    $('inf').textContent=(ok?'✔ True aim! ':'✘ Missed. ')+`Round ${r+1} of ${rounds}`;speed*=1.12;sz()};
+  $('go').onclick=()=>act&&act();
+}
+function setu(cb){
+  world(0x7dd3fc,{x:0,y:1,z:0,r:9,h:5.5,o:0},()=>{
+    const sea=add(new T.PlaneGeometry(200,200,24,24),mt(0x0e7490),0,-.6,0);sea.rotation.x=-Math.PI/2;
+    ticks.push(t=>{const p=sea.geometry.attributes.position;for(let i=0;i<p.count;i++)p.setZ(i,Math.sin(i*.7+t/500)*.25);p.needsUpdate=true});
+    for(let i=0;i<10;i++)tower(-30+i*7,-90);});
+  const hanu=pl(0xea580c,0xdc2626,0,2,1.5);let px=0,tx=0,got=0,lives=3,items=[],n=0;const need=10;
+  ui(`<p>Drag left/right (or ← →) to catch Ram-inscribed stones 🪨 and dodge Rakshasa fire 🔥.</p><p class="info" id="inf"></p>`,1);
+  cv.onpointermove=e=>tx=(e.clientX/innerWidth-.5)*13;
+  gt=()=>{if(K.ArrowLeft)tx-=.3;if(K.ArrowRight)tx+=.3;tx=Math.max(-5.5,Math.min(5.5,tx));px+=(tx-px)*.25;hanu.position.x=px;
+    if(++n%34==0){const g=Math.random()>.28;items.push({g,m:add(g?new T.BoxGeometry(1,.8,1):new T.SphereGeometry(.55,10,8),g?mt(0x9ca3af,0x332200):mt(0xff6a00,0xff3300),rand(-5.5,5.5),1.2,-40),s:.38+got*.02})}
+    items=items.filter(i=>{i.m.position.z+=i.s;i.m.rotation.y+=.05;const z=i.m.position.z;
+      if(z>1&&z<3.2&&Math.abs(i.m.position.x-px)<1.4){W.remove(i.m);if(i.g){got++;add(new T.BoxGeometry(2.6,.3,2),mt(0xa8a29e,0x221100),0,-.3,-3-got*2.1)}else{lives--;burst(px,1.5,2,0xff5500,12,.15,30)}return false}
+      if(z>8){W.remove(i.m);return false}return true});
+    $('inf').textContent=`Bridge ${got}/${need}  ·  ❤ ${lives}`;
+    if(got>=need||lives<=0){gt=null;cb(got>=need)}};
+}
+function heads(cb){
+  let hit=0,miss=0,cur=-1,tm;Object.assign(V,{x:0,y:7,z:-9,r:15,h:8,o:0});
+  ui(`<p>Tap the glowing head to strike it before it fades!</p><p class="info" id="inf"></p>`,1);
+  const upd=()=>$('inf').textContent=`Heads felled ${hit}/10 · Misses ${miss}/4`;upd();
+  const next=()=>{hd.forEach(h=>h.material.emissive.setHex(0));if(hit>=10||miss>=4){hd.forEach(h=>h.material.emissive.setHex(0));tap=null;return cb(hit>=10)}
+    cur=Math.floor(Math.random()*10);hd[cur].material.emissive.setHex(0xff4400);tm=setTimeout(()=>{miss++;upd();next()},Math.max(650,1300-hit*55))};
+  tap=i=>{if(i<0)return;clearTimeout(tm);if(i===cur){hit++;const p=hd[i].getWorldPosition(new T.Vector3());burst(p.x,p.y,p.z,0xffaa00,14,.2,40)}else miss++;upd();next()};
+  next();
+}
+/* ---------- scenes ---------- */
+function sTitle(){world(0x2a1008,{x:0,y:2,z:0,r:10,h:4},()=>{ground(0x6b3a1e);stars();mount(8,0x4a2a1a);ram(0,0,2);diyas(60,4,18)})}
+function sMith(){world(0xfde68a,{y:2.5,r:11,h:4.5},()=>{ground(0xe7c98a);for(let i=0;i<8;i++){const a=i/8*6.28;add(new T.CylinderGeometry(.5,.6,7,10),mt(0xf5e6c4),Math.cos(a)*10,3.5,Math.sin(a)*10-2)}
+  add(new T.CylinderGeometry(1.2,1.5,1,10),mt(0xb45309),0,.5,0);bow=add(new T.TorusGeometry(1.6,.14,8,28,Math.PI),mt(0xb45309,0x331100),0,2.2,0);bow.rotation.z=-Math.PI/2;
+  ram(-4,3);sita(4,3);burst(0,2,0,0xffd700,0)})}
+function sAyo(){world(0x3b1d3a,{y:3,r:14,h:5},()=>{ground(0x5a3a2a);stars();add(new T.BoxGeometry(14,7,6),mt(0xf5e6c4,0x201000),0,3.5,-9);for(const x of[-8,8])add(new T.CylinderGeometry(1,1.2,10,8),mt(0xf5e6c4),x,5,-9);diyas(70,3,16);ram(-1.5,1);sita(1.5,1);})}
+function sFor(k){world(0x2f5d3a,{y:1.5,r:11,h:4},()=>{ground(0x2d5016);for(let i=0;i<45;i++){const x=rand(-30,30),z=rand(-30,30);if(Math.hypot(x,z)>8)tree(x,z)}
+  add(new T.BoxGeometry(3,2,3),mt(0x8b5a2b),-6,1,-3);add(new T.ConeGeometry(2.6,1.6,4),mt(0xca8a04),-6,2.8,-3).rotation.y=.8;
+  ram(0,0);sita(1.3,.6);lak(-1.3,.6);
+  if(k=='deer'){const d=new T.Group();add(new T.BoxGeometry(1.6,.8,.7),mt(0xfacc15,0xb8860b),0,1,0,d);add(new T.SphereGeometry(.4,8,8),mt(0xfacc15,0xb8860b),1,1.6,0,d);for(const x of[-.6,.6])for(const z of[-.25,.25])add(new T.CylinderGeometry(.06,.06,1,5),mt(0xfacc15),x,.4,z,d);W.add(d);ticks.push(t=>{d.position.set(Math.cos(t/900)*9,0,Math.sin(t/900)*9);d.rotation.y=-t/900})}
+  if(k=='jat'){const j=new T.Group();add(new T.SphereGeometry(1,8,8),mt(0x78350f),0,.8,0,j).scale.set(1.8,.7,.8);for(const s of[-1,1])add(new T.BoxGeometry(.4,.1,3),mt(0x92400e),0,.9,s*2.2,j);j.position.set(5,0,2);W.add(j)}
+  if(k=='sha'){pl(0xd6b38a,0xf5f5f4,3.5,1,.9,0);add(new T.CylinderGeometry(.4,.3,.3,8),mt(0xb45309),3.5,.15,2.2)}})}
+function sKish(){world(0x7dd3fc,{y:2,r:12,h:5},()=>{ground(0x4d7c0f);mount(10,0x6b7280);const h=pl(0xea580c,0xdc2626,0,0,2.2);add(new T.TorusGeometry(.6,.1,6,12,4.5),mt(0xea580c),-.5,.8,-.6,h);ram(-5,3);lak(-7,3)})}
+function lanka(){world(0x5a1010,{x:0,y:4,z:-8,r:24,h:10},()=>{ground(0x3b0d0d);for(let i=0;i<14;i++)tower(-45+i*7+rand(-2,2),-rand(28,42));
+  RV=new T.Group();W.add(RV);add(new T.CylinderGeometry(2.6,3.4,7,10),mt(0x1e1b4b),0,3.5,-9,RV);hd=[];
+  for(let i=0;i<10;i++){const row=i<5?0:1,h=add(new T.SphereGeometry(.85,14,10),mt(0x7f1d1d),(i%5-2)*2.1,7.6+row*2.2,-9,RV);add(new T.ConeGeometry(.55,.8,6),mt(0xfacc15,0x553300),0,.95,0,h);hd.push(h)}
+  ram(0,3,1.3)})}
+function sEnd(){world(0x0b0b2a,{y:3,r:15,h:6},()=>{ground(0x3a2a1a);stars();add(new T.BoxGeometry(16,8,6),mt(0xf5e6c4,0x201000),0,4,-12);diyas(160,3,22);ram(-2,2,1.2);sita(.5,2);lak(-4,2);pl(0xea580c,0xdc2626,3,2,1.3);
+  ticks.push(()=>{if(Math.random()<.03)burst(rand(-10,10),rand(10,16),rand(-14,-6),[0xff4d4d,0xffd700,0x4dd2ff,0xff7ae0][Math.floor(rand(0,4))],45,.25,80)})})}
+/* ---------- story ---------- */
+function title(){sTitle();hud('Prologue');
+  story('🏹','The Legend of Ram','Walk the path of Maryada Purushottam. Draw the bow, keep your word, build the bridge, and face Ravana — now in 3D.',[['Begin the Journey',()=>{S.d=0;S.v=0;ch1()}]],best?`Best Dharma path: ${best}/8`:'Based on the Ramayana of Valmiki')}
+function ch1(){sMith();hud('I · Mithila');
+  story('👑','The Swayamvara of Sita','In King Janaka\'s court lies Shiva\'s mighty bow, which no prince has lifted. Sita watches. Vishwamitra nods: "Rise, Rama."',
+  [['Approach the bow',()=>{V.r=8;meter('Bend the bow of Shiva. Release in the green zone. Hit 2 of 3.',22,3,.9,h=>{S.v+=h*2;
+    if(h>=2){bow.visible=false;burst(0,2.2,0,0xffd700,50,.25,70)}
+    story(h>=2?'💥':'🙏',h>=2?'The Bow Breaks!':'Humility and Strength',h>=2?'The bow snaps with a thunderous crack that shakes the three worlds. Sita garlands you. Mithila rejoices!':'The bow yields to your steady will and breaks in two. Sita garlands you.',[['Return to Ayodhya',ch2]])},p=>{bow.scale.x=1+p/100*.7})}]]);}
+function ch2(){sAyo();hud('II · Ayodhya');
+  story('🪔','The Fourteen-Year Exile','On the eve of your coronation, Queen Kaikeyi claims her boons: Bharata shall be king, and Rama shall live in the forest for fourteen years.',
+  [['Accept gladly, to keep father\'s word',()=>{S.d+=2;ch2b('Your calm smile steadies the weeping court. Sita and Lakshman refuse to stay behind.')}],['Let Lakshman rage and seize the throne',()=>ch2b('You hold him back, ashamed. You leave in silence with Sita and Lakshman.')]],'Dharma is tested.')}
+function ch2b(t){story('🌲','Into the Forest',t,[['Walk to Panchavati',ch3]])}
+function ch3(){sFor('deer');hud('III · Dandaka');
+  story('🦌','The Golden Deer','Sita begs for the golden deer. Lakshman warns: "It is Maricha\'s illusion." Your arrow finds the deer — and a cry in your voice echoes: "Lakshmana!" Ravana, in disguise, takes Sita...',[['Rush back — Sita is gone!',ch3b]])}
+function ch3b(){sFor('jat');story('🦅','Jatayu, the Noble Vulture','You find the old king of birds, wounded. "Ravana carried Sita south," he gasps, and breathes his last.',
+  [['Perform his last rites as a son would',()=>{S.d+=2;ch3c()}],['Press on — no time to lose',ch3c]])}
+function ch3c(){sFor('sha');story('🍇','Shabari\'s Berries','The old ascetic Shabari offers berries she has tasted to ensure they are sweet. Lakshman hesitates.',
+  [['Eat them with gratitude',()=>{S.d+=2;ch4()}],['Accept, but do not eat',ch4]])}
+function ch4(){sKish();hud('IV · Kishkindha');
+  story('🐒','Hanuman Joins','Hanuman bows low, then leaps the ocean, finds Sita and burns Lanka\'s towers. Now the sea blocks the way. Nala says: "Write your name on stones. They will float."',[['Build the Ram Setu',setuRun]])}
+function setuRun(){hud('IV · The Sea');setu(ok=>{
+  if(ok){S.v+=4;story('🌉','The Bridge Stands','Stone upon stone, the army raises a road across the sea. Even a tiny squirrel carries pebbles. The way to Lanka is open.',[['March to Lanka',ch5]])}
+  else story('🌊','The Waves Win — For Now','Fire and waves scatter the stones.',[['Try again',setuRun]])})}
+function ch5(){lanka();hud('V · Lanka');
+  story('🕊️','A Chance for Peace','Before war, Angada carries one more offer to Ravana: return Sita, and live. Vibhishana begs him to agree. Ravana laughs and banishes his brother.',
+  [['Offer peace once more — then fight',()=>{S.d+=2;war()}],['Attack at once',war]])}
+function war(){lanka();V.o=1;story('⚔️','The Final War','The battle rages. Lakshman falls to a divine spear and Hanuman fetches the Sanjeevani herb. Now Rama and Ravana stand face to face.',
+  [['Face Ravana',()=>heads(ok=>{if(ok){S.v+=3;brahma()}else story('🔥','Overwhelmed','The heads rise faster than you can strike. Vibhishana cries: "Steady, Lord!"',[['Steady your breath and retry',war]])})]])}
+function brahma(){V.o=0;story('🔱','The Secret of the Navel','Every head regrows! Vibhishana whispers: "His life is hidden in his navel. Use the Brahmastra."',
+  [['Invoke the Brahmastra',()=>meter('One arrow, one chance. Hit the green zone 2 of 3 times.',16,3,1.1,h=>{
+    if(h>=2){S.v+=4;ui('<p class="info">The Brahmastra flies…</p>',1);shoot([0,2.5,3],[0,5,-9],()=>{burst(0,5,-9,0xff8800,90,.3,80);ticks.push(()=>{RV.scale.multiplyScalar(.96)});setTimeout(end,2200)})}
+    else story('🌀','The arrow falls short','Breathe. Aim again with a quiet mind.',[['Try again',brahma]])})]])}
+function end(){sEnd();hud('Epilogue');let ti,tx;
+  if(S.d>=7){ti='Maryada Purushottam';tx='You won not only by the bow but by your conduct. Ayodhya lights a million lamps, and the world calls you the ideal of dharma.'}
+  else if(S.d>=4){ti='The Righteous Prince';tx='Ravana falls and Ayodhya celebrates Diwali. You kept dharma more often than not, yet the path still has lessons.'}
+  else{ti='The Mighty Warrior';tx='Ravana falls and Ayodhya celebrates. But legends are measured by compassion, not only strength. Walk the path again.'}
+  try{if(S.d>best){best=S.d;localStorage.setItem('ram_best',best)}}catch(e){}
+  story('🪔',ti,tx+`<br><b>Dharma ${S.d}/8 · Valor ${S.v}</b>`,[['Play Again',title]],'Jai Shri Ram — Diwali dawns')}
+title();requestAnimationFrame(loop);
+</script>
+</body>
+</html>
